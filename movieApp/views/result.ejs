@@ -1,0 +1,9 @@
+<h1>Results:</h1>
+
+<ol>
+<% data["Search"].forEach(function(movie) { %>
+    <li><strong><%= movie["Title"] %></strong> - <i><%= movie["Year"] %></i></li>
+<% }); %>
+</ol>
+
+<a href="https://webdev-ws-jasondent.c9users.io/"><button type="button">Back to Search</button></a>
