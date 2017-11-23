@@ -1,5 +1,7 @@
 var express = require("express");
 var app = express();
+var http = require('http');
+var server = http.createServer(app);
 var parser = require("body-parser");
 var mongo = require("mongodb");
 var MongoClient = mongo.MongoClient;
@@ -45,6 +47,7 @@ app.get("/campgrounds/new", function(req, res) {
     res.render("new.ejs");
 })
 
-app.listen(process.env.PORT, process.env.IP, function() {
-    console.log("YelpCamp initiated...");
+server.listen(3000, 'localhost');
+server.on('listening', function() {
+    console.log('Express server started on port %s at %s', server.address().port, server.address().address);
 });
