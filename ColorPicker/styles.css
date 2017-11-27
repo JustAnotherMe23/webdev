@@ -1,0 +1,64 @@
+body {
+	margin: 0;
+	background: rgb(23, 23, 23);
+	padding: 0;
+	text-transform: uppercase;
+	font-family: 'Maven Pro', sans-serif;
+}
+
+#title {
+	background: rgb(70, 120, 170);
+	color: white;
+	margin: 0px;
+	height: ;
+	text-align: center;
+	transition: all 1.0s;
+}
+
+h1	{
+	margin: 0;
+	font-size: 50px;
+}
+h2	{
+	height: 100%;
+	margin: 0;
+}
+
+#result {
+	margin-left: 7%;
+	margin-right: 7%;
+}
+
+#menu {
+	height: 100%;
+	background: white;
+}
+
+.box {
+	background: red;
+	width: 30%;
+	height: 150px;
+	float: left;
+	margin: 1.66%;
+	border-radius: 20px;
+	transition: all 1.0s;
+}
+
+#colors {
+	max-width: 600px;
+	margin: 20px auto;
+}
+
+.tab {
+	padding: 0 5px;
+	transition: all 0.5s;
+}
+
+.tab:hover {
+	color: white;
+	background: rgb(23, 23, 23);
+}
+
+.clear {
+	opacity: 0.0;
+}

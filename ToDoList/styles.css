@@ -1,0 +1,86 @@
+body {
+	background: -webkit-linear-gradient(left, rgb(0, 200, 200), rgb(150, 250, 0));
+	font-family: 'Krona One', sans-serif;
+}
+
+#container {
+	margin: 150px auto;
+	width: 400px;
+	background: white;
+}
+
+#head {
+	background: rgb(120, 131, 255);
+	padding: 5px 15px;
+}
+
+#title {
+	color: white;
+	font-family: 'Lobster Two', cursive;
+	font-size: 25px;
+}
+
+#plus {
+	float: right;
+	color: white;
+	font-size: 25px;
+	margin: 1px;
+}
+.space {
+	font-size: 13px;
+	font-family: 'Krona One', sans-serif;
+}
+
+#add {
+	font-size: 13px;
+	width: 91.5%;
+	font-family: 'Krona One', sans-serif;
+	padding: 5px 0 5px 30px;
+
+}
+
+.space:nth-child(2n) {
+	background: rgb(230, 230, 230);
+}
+
+.space:nth-child(2n - 1) {
+	background: white;
+}
+
+h3 {
+	margin: auto 0;
+	padding: 0 0 0 0;
+	line-height: 20px;
+}
+
+.text {
+	margin: 5px;
+}
+
+.trash {
+	background: red;
+	margin-right: 30px;
+	width: 0px;
+	height: 20px;
+	display: inline-block;
+	color: white;
+	text-align: center;
+	transition: 0.2s;
+	opacity: 0;
+}
+
+h3:hover .trash {
+	width: 40px;
+	opacity: 1;
+}
+
+.noHeight {
+	height: 0;
+	opacity: 0;
+	transition: 0.2s;
+}
+
+.crossout {
+	text-decoration: line-through;
+	opacity: 0.7;
+}
