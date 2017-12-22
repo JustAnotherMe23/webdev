@@ -3,6 +3,7 @@ var app = express();
 var http = require('http');
 var server = http.createServer(app);
 var parser = require("body-parser");
+/*
 var mongo = require("mongodb");
 var MongoClient = mongo.MongoClient;
 var url = "mongodb://localhost:27017/yelpcamp";
@@ -16,7 +17,7 @@ MongoClient.connect(url, function(err, db) {
     db.close();
   });
 });
-
+*/
 app.use(parser.urlencoded({extended: true}));
 
 
@@ -27,6 +28,7 @@ var campgrounds = [
     ]
 
 app.get("/", function(req, res) {
+    console.log("Hello");
     res.render("landing.ejs");
 })
 
