@@ -1,46 +1,43 @@
+"use strict";
+
 var express = require("express");
 var app = express();
 var http = require('http');
 var server = http.createServer(app);
 var parser = require("body-parser");
-/*
-var mongo = require("mongodb");
-var MongoClient = mongo.MongoClient;
-var url = "mongodb://localhost:27017/yelpcamp";
+var mongoose = require("mongoose");
+var models = require("./models.js")
+var campground = models.campground;
+var seedDB = require("./seeds.js");
 
-MongoClient.connect(url, function(err, db) {
-  if (err) throw err;
-  //Exclude the _id field from the result:
-  db.collection("campground").find({}, {}).toArray(function(err, result) {
-    if (err) throw err;
-    console.log(result);
-    db.close();
-  });
-});
-*/
+seedDB();
+
+mongoose.connect("mongodb://localhost/yelpcamp", {useMongoClient: true});
+
 app.use(parser.urlencoded({extended: true}));
 
-
-var campgrounds = [
-    {name: "Salmon Creek", image: "https://www.fs.usda.gov/Internet/FSE_MEDIA/stelprdb5115421.jpg"},
-    {name: "Scallop Cove", image: "https://www.fs.usda.gov/Internet/FSE_MEDIA/stelprdb5338277.jpg"},
-    {name: "Tuna Turnpike", image: "https://img.hipcamp.com/image/upload/c_limit,f_auto,h_1200,q_60,w_1920/v1440478008/campground-photos/csnhvxn0qcki2id5vxnc.jpg"}
-    ]
-
 app.get("/", function(req, res) {
-    console.log("Hello");
     res.render("landing.ejs");
 })
 
 app.get("/campgrounds", function(req, res) {
-        res.render("campgrounds.ejs", {campgrounds: campgrounds});
+    campground.find({}, function(err, campgrounds) {
+        if(err) console.log(err);
+        res.render("index.ejs", {campgrounds: campgrounds});
+    });
 });
 
 app.post("/campgrounds", function(req, res) {
     var name = req.body.name;
     var image = req.body.image;
-    var newCampground = {name: name, image: image};
-    campgrounds.push(newCampground);
+    var description = req.body.description;
+    campground.create({name: name, image: image, description: description}, function(err, campground) {
+        if(err) {
+            console.log(err);
+        } else {
+            console.log(campground);
+        }
+    });
     
     res.redirect("/campgrounds");
 });
@@ -49,7 +46,13 @@ app.get("/campgrounds/new", function(req, res) {
     res.render("new.ejs");
 })
 
-server.listen(3000, 'localhost');
-server.on('listening', function() {
-    console.log('Express server started on port %s at %s', server.address().port, server.address().address);
+app.get("/campgrounds/:id", function(req, res) {
+    campground.findById(req.params.id, function(err, campground) {
+        if(err) console.log(err);
+        res.render("show.ejs", {campground: campground});
+    });
+});
+
+server.listen(process.env.PORT, process.env.IP, function() {
+    console.log('Express server started on port %s at %s', process.env.PORT, process.env.IP);
 });
