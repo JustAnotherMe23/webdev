@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Tally</title>
+        <link rel="stylesheet" type="text/css" href="/tally/views/styles.css"></link>
+    </head>
+    <body>
+        <div id="container">stuff</div>
+        <script>
+            window.fbAsyncInit = function() {
+                FB.init({
+                    appId      : '166266750802491',
+                    cookie     : true,
+                    xfbml      : true,
+                    version    : 'v2.11'
+                });
+                  
+                FB.AppEvents.logPageView();   
+                
+                FB.getLoginStatus(function(response) {
+                    if(response.status === 'connected') {
+                        document.getElementById('status').innerHTML = 'Connected';
+                    } else if(response.status === 'not_authorized') {
+                        document.getElementById('status').innerHTML = 'Not authorized';
+                    } else {
+                        document.getElementById('status').innerHTML = 'Not logged in';
+                    }
+                });
+            };
+        
+            (function(d, s, id){
+                var js, fjs = d.getElementsByTagName(s)[0];
+                if (d.getElementById(id)) {return;}
+                js = d.createElement(s); js.id = id;
+                js.src = "https://connect.facebook.net/en_US/sdk.js";
+                fjs.parentNode.insertBefore(js, fjs);
+            }(document, 'script', 'facebook-jssdk'));
+            
+            function login() {
+                FB.login(function(response) {
+                    if(response.status === 'connected') {
+                        window.location.href = "https://www.google.com";
+                    } else if(response.status === 'not_authorized') {
+                        document.getElementById('status').innerHTML = 'Not authorized';
+                    } else {
+                        document.getElementById('status').innerHTML = 'Not logged in';
+                    }
+                });
+            }
+        </script>
+        <button onclick="login()">Login</button>
+        <div id="status"></div>
+    </body>
+</html>

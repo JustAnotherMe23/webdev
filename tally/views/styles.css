@@ -1,0 +1,51 @@
+body {
+    margin: 0;
+}
+
+#container {
+    width: 80%;
+    height: 10000px;
+    background-color: red;
+    color: purple;
+    margin: 0 auto 0 20%;
+    padding: 15px;
+}
+
+#navbar {
+    width: 100%;
+    position: fixed;
+}
+
+#vote {
+    background: #502AAC;
+    height: 50px;
+    padding: 10px;
+}
+
+#nav_options {
+    background: #502AAC;
+    margin: 0;
+    width: 20%;
+    text-align: right;
+}
+
+#logo {
+    float: left;
+    color: #8CFF4F;
+    width: 20%;
+    text-align: right;
+    height: 50px;
+    padding: 10px;
+}
+
+#spacer {
+    height: 50px;
+}
+
+.nav_item {
+    padding: 10px;
+}
+
+#vote_input {
+    width: 450px;
+}
