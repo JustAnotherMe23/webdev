@@ -3,7 +3,40 @@ body {
     background-color: #502AAC;
     font-family: 'Lato', sans-serif;
     font-size: 16px;
-    letter-spacing: 1px
+    letter-spacing: 1px;
+    height: 100%;
+}
+
+#login_button_wrapper {
+    position: fixed;
+    height: 100%;
+    width: 100%;
+    z-index: 91;
+    font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif; 
+    font-weight: 300;
+}
+
+#login_wrapper {
+    position: fixed;
+    width: 100%;
+    left: 0px;
+    top: 0px;
+    background-color: white;
+    z-index: 90;
+    height: 100%;
+    opacity: 0.8;
+}
+
+#login_button {
+    margin: 20% auto;
+    display: block;
+    z-index:9999;
+    font-size: 32px;
+    background-color: #3B5998;
+    color: white;
+    width: 400px;
+    border-radius: 5px;
+    
 }
 
 #container {
@@ -11,6 +44,8 @@ body {
     margin: 0 auto 0 220px;
     padding: 15px;
     height: auto;
+    font-family: "Times New Roman", Times, serif;
+    font-size: 12px;
 }
 
 #navbar {
@@ -24,6 +59,7 @@ body {
     height: 50px;
     padding: 10px;
     min-width: 400px;
+    white-space: nowrap;
 }
 
 #nav_options {
@@ -76,15 +112,19 @@ body {
 }
 
 #chat_box {
-    width: 400px;
+    max-width: 400px;
     background-color: white;
     word-wrap: break-word;
 }
 
 #chat_input {
-    width: 400px;
+    width: 100%;
 }
 
 .gray {
     background-color: #EAE8EA;
+}
+
+.bold {
+    font-weight: 900;
 }

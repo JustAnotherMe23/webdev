@@ -2,7 +2,6 @@
 <html>
     <head>
         <title>Tally</title>
-        <link rel="stylesheet" type="text/css" href="/tally/views/styles.css"></link>
     </head>
     <body>
         <div id="container">stuff</div>
@@ -19,7 +18,7 @@
                 
                 FB.getLoginStatus(function(response) {
                     if(response.status === 'connected') {
-                        document.getElementById('status').innerHTML = 'Connected';
+                        document.getElementById('status').innerHTML = response["authResponse"]["userID"];
                     } else if(response.status === 'not_authorized') {
                         document.getElementById('status').innerHTML = 'Not authorized';
                     } else {
@@ -39,15 +38,18 @@
             function login() {
                 FB.login(function(response) {
                     if(response.status === 'connected') {
-                        window.location.href = "https://www.google.com";
+                        document.getElementById('status').innerHTML = response["authResponse"]["userID"];
                     } else if(response.status === 'not_authorized') {
                         document.getElementById('status').innerHTML = 'Not authorized';
                     } else {
-                        document.getElementById('status').innerHTML = 'Not logged in';
+                        document.getElementById('status').innerHTML = "Not logged in";
                     }
                 });
             }
         </script>
+        
+        
+        
         <button onclick="login()">Login</button>
         <div id="status"></div>
     </body>

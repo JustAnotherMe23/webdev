@@ -7,14 +7,18 @@
         <link rel="stylesheet" type="text/css" href="/tally/views/styles.css"></link>
     </head>
     <body>
+        <div id="login_button_wrapper">
+            <button id="login_button" onclick="login()">Continue with Facebook</button>
+        </div>
+        <div id="login_wrapper"></div>
         
         <div id="navbar">
             <div id="top_line">
                 <div id="logo">Tally Radio</div>
                 <div id="vote">
-                    <form>
-                        <input type="text" class="text_input" id="vote_input"></input>
-                        <input type="submit" class="submit" id="vote_button"></input>
+                    <form onsubmit="return false" autocomplete="off">
+                        <input type="text" class="text_input" id="vote_input" placeholder="Soundclound url"></input>
+                        <button class="submit" id="vote_button">Submit</button>
                     </form>
                 </div>
             </div>
@@ -31,12 +35,13 @@
             src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/293&amp;&sharing=false"></iframe>
             <div id="chat_box">
                 <form onsubmit="return false" autocomplete="off">
-                    <input type="text" id="chat_input"></input>
+                    <input type="text" id="chat_input" placeholder="Enter comment"></input>
                 </form>
                 <div id="chat_comments"></div>
             </div>
         </div>
         
+        <script src="/tally/node_modules/socket.io-client/dist/socket.io.js"></script>
         <script type="text/javascript" src="/tally/views/showMusic.js"></script>
     </body>
 </html>
