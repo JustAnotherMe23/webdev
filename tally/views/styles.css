@@ -16,7 +16,7 @@ body {
     font-weight: 300;
 }
 
-#login_wrapper {
+#login_block {
     position: fixed;
     width: 100%;
     left: 0px;
@@ -36,7 +36,19 @@ body {
     color: white;
     width: 400px;
     border-radius: 5px;
-    
+}
+
+#username_form, #username_text {
+    margin: 20% auto 0 auto;
+    display: block;
+    z-index:9998;
+}
+
+#username_button {
+    margin: 0 auto;
+    display: block;
+    z-index:9998;
+    background-color: #AAAAFF;
 }
 
 #container {
@@ -127,4 +139,8 @@ body {
 
 .bold {
     font-weight: 900;
+}
+
+.hide {
+    display: none;
 }

@@ -31,6 +31,8 @@ function login() {
     FB.login(function(response) {
         console.log(response)
         if(response.status === 'connected') {
+            document.getElementById("login_button").className += "hide";
+            document.getElementById("submit_username").classList.remove("hide");
         } else if(response.status === 'not_authorized') {
         } else {
         }
@@ -82,7 +84,3 @@ socket.on("add_comment", function(comment) {
         commentGrayCounter = 0;
     }
 });
-
-/*
-        
-*/
