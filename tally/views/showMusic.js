@@ -1,5 +1,14 @@
 "use strict";
 
+var chat_input = document.getElementById('chat_input');
+var chat_comments = document.getElementById('chat_comments');
+
+var commentGrayCounter = 0;
+var socket = io();
+
+var userID = null;
+var username = null;
+
 window.fbAsyncInit = function() {
     FB.init({
         appId      : '166266750802491',
@@ -11,10 +20,14 @@ window.fbAsyncInit = function() {
     FB.AppEvents.logPageView();   
     
     FB.getLoginStatus(function(response) {
-        console.log(response)
         if(response.status === 'connected') {
+            userID = response.authResponse.userID;
+            socket.emit("request_username", {userID: userID + ""});
         } else if(response.status === 'not_authorized') {
         } else {
+            document.getElementById("login_button").classList.remove("hide");
+            document.getElementById("login_button_wrapper").classList.remove("hide");
+            document.getElementById("login_block").classList.remove("hide");
         }
     });
 };
@@ -29,10 +42,12 @@ window.fbAsyncInit = function() {
 
 function login() {
     FB.login(function(response) {
-        console.log(response)
         if(response.status === 'connected') {
+            userID = response.authResponse.userID;
+            socket.emit("request_username", {});
             document.getElementById("login_button").className += "hide";
-            document.getElementById("submit_username").classList.remove("hide");
+            document.getElementById("login_button_wrapper").className += "hide";
+            document.getElementById("login_block").className += "hide";
         } else if(response.status === 'not_authorized') {
         } else {
         }
@@ -41,17 +56,12 @@ function login() {
 
 /*------Facebook Login Protocol End-------*/
 
-var chat_input = document.getElementById('chat_input');
-var chat_comments = document.getElementById('chat_comments');
-
-var commentGrayCounter = 0;
-var socket = io();
-
 chat_input.addEventListener('keypress', function (e) {
     var key = e.which || e.keyCode;
     if(key === 13) { // 13 is enter
+        requestUsername();
         var msg = chat_input.value;
-        socket.emit('make_comment', {writer: "writer", msg: msg});
+        socket.emit('make_comment', {writer: username, msg: msg});
         chat_input.value = "";
     }
 });
@@ -60,16 +70,18 @@ var vote_input = document.getElementById('vote_input');
 vote_input.addEventListener('keypress', function(e) {
     var key = e.which || e.keyCode;
     if(key === 13) {
-        var vote = vote_input.value;
-        socket.emit('make_vote', {writer: "writer", vote: vote});
+        requestUsername();
+        var upvote = vote_input.value;
+        socket.emit('make_vote', {userID: userID, upvote: upvote});
         vote_input.value = "";
     }
 })
 
 var vote_button = document.getElementById('vote_button');
 vote_button.addEventListener('click', function () {
-    var vote = vote_input.value;
-    socket.emit('make_vote', {writer: "writer", vote: vote});
+    requestUsername();
+    var upvote = vote_input.value;
+    socket.emit('make_vote', {username: username, upvote: upvote});
     vote_input.value = "";
 });
 
@@ -84,3 +96,51 @@ socket.on("add_comment", function(comment) {
         commentGrayCounter = 0;
     }
 });
+
+socket.on("send_username", function(object) {
+    username = object.username;
+})
+
+
+socket.on('refresh', function() {
+    location.reload();
+})
+
+var requestUsername = function() {
+    
+    var valid = true;
+    var sendInfo = false;
+    if(username === null) {
+        valid = false;
+    }
+    
+    while(!valid) {
+        username = prompt("Please enter a username: ");
+        if(username != "" && username != null) {
+            valid = true;
+        }
+        sendInfo = true;
+    }
+    
+    if(sendInfo) {
+        socket.emit("set_username", {userID: userID, username: username});
+    }
+};
+
+var iframeElement = document.querySelector('iframe');
+var widget = SC.Widget(iframeElement);
+
+widget.bind(SC.Widget.Events.READY, function() {
+    widget.getDuration(function(duration) {
+        socket.emit('set_start', {
+            time: Date.now(),
+            duration: duration,
+        });
+    });
+});
+
+socket.on('play', function(object) {
+    console.log(object.seek);
+    widget.seekTo(object.seek);
+    widget.play();
+})

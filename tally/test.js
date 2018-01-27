@@ -1,8 +1,16 @@
 "use strict";
 
-var request = require("request");
-var url = "http://soundcloud.com/the-game-podcast/no-sympathy-for-silva-as";
-request(url, function(err, res, body) {
-    if(err) console.log(err);
-    console.log(res);
+var mongoose = require("mongoose");
+var models = require("./models");
+mongoose.connect("mongodb://localhost/tally");
+
+models.user.find({userID: "521833454863655"}, function(err, user) {
+    user[0].username = 'Bobby';
+    user[0].save(function(err) {
+      if(err) {
+        console.log(err);
+      } else {
+        console.log('Success');
+      }
+    });
 });

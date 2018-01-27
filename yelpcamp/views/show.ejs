@@ -6,4 +6,13 @@
 <img src="<%= campground.image %>"></img>
 <p><%= campground.description %></p>
 
+<form action="/campgrounds/<%= campground._id %>/comment" method="POST">
+    <input type="text" name="comment" placeholder="Add comment">
+    <input type="submit">
+</form>
+
+<% for(var i = 0; i < campground.comments.length; i++) { %>
+<p><%= campground.comments[i]["text"] %></p>
+<% } %>
+
 <% include partials/footer %>

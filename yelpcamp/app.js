@@ -8,6 +8,7 @@ var parser = require("body-parser");
 var mongoose = require("mongoose");
 var models = require("./models.js")
 var campground = models.campground;
+var comment = models.comment;
 var seedDB = require("./seeds.js");
 
 seedDB();
@@ -47,11 +48,31 @@ app.get("/campgrounds/new", function(req, res) {
 })
 
 app.get("/campgrounds/:id", function(req, res) {
-    campground.findById(req.params.id, function(err, campground) {
-        if(err) console.log(err);
-        res.render("show.ejs", {campground: campground});
+    campground.findById(req.params.id).populate("comments").exec(function(err, campground) {
+        if(err) {
+            console.log(err);
+        } else if(campground == null) {
+            res.redirect("/campgrounds");
+        } else {
+            res.render("show.ejs", {campground: campground});
+        }
     });
 });
+
+app.post("/campgrounds/:id/comment", function(req, res) {
+    comment.create({author:"Cain", text:req.body.comment}, function(err, comment) {
+        if(err) console.log(err);
+        campground.findById(req.params.id, function(err, campground) {
+            if(err) console.log(err);
+            campground.comments.push(comment);
+            campground.save(function(err) {
+                if(err) console.log(err);
+                console.log("Comment added to campground " + campground.name);
+            });
+        });
+    });
+    res.redirect("/campgrounds/" + req.params.id);
+})
 
 server.listen(process.env.PORT, process.env.IP, function() {
     console.log('Express server started on port %s at %s', process.env.PORT, process.env.IP);

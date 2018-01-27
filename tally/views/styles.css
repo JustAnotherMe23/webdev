@@ -38,19 +38,6 @@ body {
     border-radius: 5px;
 }
 
-#username_form, #username_text {
-    margin: 20% auto 0 auto;
-    display: block;
-    z-index:9998;
-}
-
-#username_button {
-    margin: 0 auto;
-    display: block;
-    z-index:9998;
-    background-color: #AAAAFF;
-}
-
 #container {
     background: #AAAAFF;
     margin: 0 auto 0 220px;
@@ -143,4 +130,8 @@ body {
 
 .hide {
     display: none;
+}
+
+#player {
+    height: 200px;
 }

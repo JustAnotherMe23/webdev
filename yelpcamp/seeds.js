@@ -19,9 +19,7 @@ function seedDB() {
                 models.campground.create(campgrounds[i], function(err, campground) {
                     models.comment.create({text: "This is great", author: "Who Caters"}, function(err, comment) {
                         campground.comments.push(comment);
-                        campground.save(function(err) {
-                            console.log("Comment Created");
-                        });
+                        campground.save();
                     });
                 });
             }
