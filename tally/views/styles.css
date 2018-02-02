@@ -135,3 +135,7 @@ body {
 #player {
     height: 200px;
 }
+
+.depressed {
+    background-color: #AAAAFF;
+}

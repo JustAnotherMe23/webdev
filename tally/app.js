@@ -24,10 +24,6 @@ let engine = new EmbedEngine({
   referrer: 'www.example.com'
 });
 
-var html = '<iframe id="player" width="100%" height="400" scrolling="no" frameborder="no" src="https://w.soundcloud.com/player/?visual=true&url=http%3A%2F%2Fapi.soundcloud.com%2Ftracks%2F291270561&show_artwork=true"></iframe>';
-var startTime = null;
-var duration = null;
-
 engine.registerDefaultProviders();
 
 mongoose.connect("mongodb://localhost/tally");
@@ -41,7 +37,7 @@ app.get("/", function(req, res) {
     res.render("showMusic.ejs");
 });
 
-io.on('connection', function(socket){
+io.on('connection', function(socket) {
     i = i + 1;
     console.log("Connections: " + i);
     socket.on("disconnect", function() {
@@ -77,30 +73,50 @@ io.on('connection', function(socket){
                     models.song.find({html: embed.data.html}, function(err, song) {
                         if(err) console.log(err);
                         if(song.length ===0) {
-                            var remainder = song.slice(song.indexOf('soundcloud.com/') + 15);
+                            var remainder = object.upvote.slice(object.upvote.indexOf('soundcloud.com/') + 15);
                             var artist = remainder.slice(0, remainder.indexOf('/'));
                             var title = remainder.slice(remainder.indexOf('/') + 1);
-                            
                             models.song.create({
                                 artist: artist,
                                 title: title,
                                 html: embed.data.html,
-                                vote: 1
+                                votes: 0
                             }, function(err, song) {
                                 if(err) console.log(err);
                                 models.user.find({userID: object.userID}, function(err, user) {
                                     if(err) console.log(err);
-                                    user[0].upvotes.push(song);
-                                    user[0].save();
+                                    var UU = false;
+                                    if(user.length > 0) {
+                                        user[0].upvoteIDs.push(song._id);
+                                        user[0].save();
+                                        roomVote(object.room, song._id, object.userID);
+                                    } else {
+                                        console.log("Unregistered user: voting");
+                                    }
                                 });
                             });
                         } else {
-                            song[0].vote = song[0].vote + 1;
-                            song[0].save();
+                            models.user.find({userID: object.userID}, function(err, user) {
+                                if(err) console.log(err);
+                                if(user.length > 0) {
+                                    var valid = true;
+                                    for(var i = 0; i < user[0].upvoteIDs.length; i++) {
+                                        if(user[0].upvoteIDs[i] == song[0]._id) {
+                                            valid = false;
+                                        }
+                                    }
+                                    
+                                    if(valid) {
+                                        user[0].upvoteIDs.push(song[0]._id);
+                                        user[0].save();
+                                    }
+                                    roomVote(object.room, song[0]._id, object.userID);
+                                } else {
+                                    console.log("Unregistered user: voting");
+                                }
+                            });
                         }
-                    })
-                    
-                    
+                    });
                 }
             }
         });
@@ -113,14 +129,48 @@ io.on('connection', function(socket){
     });
     
     socket.on('set_start', function(object) {
-        if(startTime === null) {
-            startTime = Date.now();
-            duration = object.duration;
-        }
-        
-        console.log(Date.now());
-        console.log(startTime);
-        socket.emit('play', {seek: Math.abs(Date.now() - startTime - 200)});
+        models.room.find({name: object.room}, function(err, room) {
+            if(err) console.log(err);
+            if(room.length > 0) {
+                if(room[0].duration == null) {
+                    room[0].startTime = Date.now();
+                    room[0].duration = object.duration;
+                    room[0].save();
+                    setTimeout(function() {
+                        room[0].startTime = null;
+                        room[0].duration = null;
+                        room[0].save();
+                        
+                        var max = 0;
+                        var favorites = [];
+                        for(var i; i < room[0].votes.length; i++) {
+                            if(room[0].votes[i].userID.length > max) {
+                                favorites = room[0].votes[i].songID;
+                                max = room[0].votes[i].userID.length;
+                            } else if(room[0].votes[i].userID.length == max) {
+                                favorites.push(room[0].votes[i].songID);
+                            }
+                        }
+                        
+                        if(favorites.length == 0) {
+                            room[0].html = "<iframe width=\"100%\" height=\"400\" scrolling=\"no\" frameborder=\"no\" src=\"https://w.soundcloud.com/player/?visual=true&url=http%3A%2F%2Fapi.soundcloud.com%2Ftracks%2F366242291&show_artwork=true\"></iframe>";
+                        } else {
+                            var song_pick = Math.floor(Math.random() * favorites.length);
+                            models.song.findById(favorites[song_pick], function(err, song) {
+                                if(err) console.log(err);
+                                room[0].html = song.html;
+                                console.log(room[0].html);
+                                room[0].save();
+                            })
+                        }
+                        io.emit('refresh', {});
+                    }, 5000);
+                }
+                socket.emit('play', {seek: Math.abs(Date.now() - room[0].startTime - 200)});
+            } else {
+                console.log("ERROR: room not found");
+            }
+        });
     });
 });
 
@@ -129,4 +179,37 @@ server.listen(process.env.PORT, process.env.IP, function() {
 });
 
 // 'https://soundcloud.com/childish-gambino/redbone';
-// var ms = getTime() where ms is time is milliseconds since a time
+//Start of user defined functions
+
+var roomVote = function(roomName, songID, userID) {
+    models.room.find({name: roomName}, function(err, room) {
+        if(err) console.log(err);
+        var valid = true;
+        var spot = -1;
+        for(var i = 0; i < room[0].votes.length; i++) {
+            for(var j = 0; j < room[0].votes[i].userIDs.length; j++) {
+                room[0].votes[i].userIDs = room[0].votes[i].userIDs.filter(function(el) {
+                    return el != userID;
+                });
+            }
+            
+            if(room[0].votes[i].songID == songID) {
+                valid = false;
+                spot = i;
+            }
+        }
+        
+        if(valid) {
+            room[0].votes.push({songID: songID, userIDs: userID});
+        } else {
+            room[0].votes[spot].userIDs.push(userID);
+        }
+        
+        room[0].save();
+    });
+};
+
+//https://soundcloud.com/childish-gambino/redbone
+//https://soundcloud.com/heyamine/caroline
+//https://soundcloud.com/bigsean-1/bounce-back
+//https://soundcloud.com/bigsean-1/sets/i-decided-3

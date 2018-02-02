@@ -8,6 +8,7 @@ var socket = io();
 
 var userID = null;
 var username = null;
+var room = "general";
 
 window.fbAsyncInit = function() {
     FB.init({
@@ -44,7 +45,7 @@ function login() {
     FB.login(function(response) {
         if(response.status === 'connected') {
             userID = response.authResponse.userID;
-            socket.emit("request_username", {});
+            socket.emit("request_username", {userID: userID + ""});
             document.getElementById("login_button").className += "hide";
             document.getElementById("login_button_wrapper").className += "hide";
             document.getElementById("login_block").className += "hide";
@@ -72,18 +73,36 @@ vote_input.addEventListener('keypress', function(e) {
     if(key === 13) {
         requestUsername();
         var upvote = vote_input.value;
-        socket.emit('make_vote', {userID: userID, upvote: upvote});
+        socket.emit('make_vote', {userID: userID, room: room, upvote: upvote});
         vote_input.value = "";
     }
-})
+});
 
 var vote_button = document.getElementById('vote_button');
 vote_button.addEventListener('click', function () {
     requestUsername();
     var upvote = vote_input.value;
-    socket.emit('make_vote', {username: username, upvote: upvote});
+    socket.emit('make_vote', {userID: userID, room: room, upvote: upvote});
     vote_input.value = "";
 });
+
+var navItems = document.getElementsByClassName('nav_item');
+var bodyItems = document.getElementsByClassName('body_item');
+for(let i = 0; i < navItems.length; i++) {
+    navItems[i].addEventListener('click', function() {
+        for(var a = 0; a < bodyItems.length; a++) {
+            if(a == i) {
+                bodyItems[a].classList.remove("hide");
+                navItems[a].classList.add("depressed");
+            } else {
+                bodyItems[a].classList.add("hide");
+                navItems[a].classList.remove("depressed");
+            }
+        }
+    })
+}
+
+
 
 socket.on("add_comment", function(comment) {
     var chat_current = chat_comments.innerHTML;
@@ -135,12 +154,12 @@ widget.bind(SC.Widget.Events.READY, function() {
         socket.emit('set_start', {
             time: Date.now(),
             duration: duration,
+            room: room
         });
     });
 });
 
 socket.on('play', function(object) {
-    console.log(object.seek);
     widget.seekTo(object.seek);
-    widget.play();
+    //widget.play();
 })
